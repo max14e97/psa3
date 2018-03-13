@@ -162,6 +162,6 @@ int main(int argc, const char ** argv) {
   vector<string> findArr = loadFromFindFile(find_filename.c_str());
 
   for(int i = 0; i < findArr.size(); i+=2){
-    ActorGraph::findPath(weighted, findArr[i], findArr[i+1], output_filename.c_str());
+    myGraph.findPath(weighted, findArr[i], findArr[i+1], output_filename.c_str());
   }
 }
