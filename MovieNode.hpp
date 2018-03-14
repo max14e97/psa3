@@ -17,6 +17,8 @@ public:
   string movieName;
   int movieYear;
 
+  //ActorNode * prevA;
+
   vector<ActorNode*> actorArr;
 
   /** Constructor.  Initialize a ActorNode with the given Data item,

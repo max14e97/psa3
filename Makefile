@@ -20,7 +20,7 @@ all: pathfinder linkpredictor awardsceremony
 
 # include what ever source code *.hpp files pathfinder relies on (these are merely the ones that were used in the solution)
 
-pathfinder: ActorNode.o MovieNode.o ActorGraph.o main.o
+pathfinder: ActorNode.hpp MovieNode.hpp ActorGraph.hpp
 
 
 
@@ -34,7 +34,7 @@ ActorNode.o: MovieNode.hpp ActorNode.hpp
 
 MovieNode.o: ActorNode.hpp MovieNode.hpp
 
-main.o: ActorNode.hpp MovieNode.hpp ActorGraph.hpp main.cpp
+#main.o: ActorNode.hpp MovieNode.hpp ActorGraph.hpp main.cpp
 
 
 clean:

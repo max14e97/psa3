@@ -14,6 +14,7 @@
 #include <vector>
 #include <queue>
 #include <functional>
+#include <limits>
 #include "ActorGraph.hpp"
 
 #include "ActorNode.hpp"
@@ -21,9 +22,12 @@
 
 using namespace std;
 
+class ActorNode;
+class MovieNode;
+
 struct Compare : public std::binary_function<ActorNode*, ActorNode*, bool>{
     bool operator() (const ActorNode * n1, const ActorNode * n2) const{
-      return ((n1->dist) < (n2->dist));
+      return ((n1->dist) > (n2->dist));
     }
 };
 
@@ -105,6 +109,8 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         myActor->movieArr.push_back(myMovie);
         myMovie->actorArr.push_back(myActor);
 
+        //cout << myActor->actorName << endl;
+
 /*
         nodeArr.push_back(myActor);
         movieNodeArr.push_back(myMovie);
@@ -180,53 +186,89 @@ vector<string> ActorGraph::loadFromFindFile(const char* in_filename) {
 
 void ActorGraph::findPath(bool weighted, string & start_name, string & find_name, const char* output_filename){
   priority_queue<ActorNode*, vector<ActorNode*>, Compare> myQueue;
-  ActorNode * curr = NULL;
-/*
-  for(int i = 0; i < nodeArr.size(); ++i){
-    if(nodeArr[i]->actorName == start_name){
-      curr = nodeArr[i];
-    }
-  }
-*/
-  if(curr == NULL){
+
+  if((actorMap.count(start_name) == 0) || (actorMap.count(find_name) == 0)){
     //print empty line onto file?
     return;
   }
 
+  for(auto itr : actorMap){
+    itr.second->dist = numeric_limits<int>::max();
+    itr.second->prev = NULL;
+    itr.second->prevM = NULL;
+    itr.second->done = false;
+  }
+  
+  ActorNode * curr = actorMap[start_name];
+
   curr->dist = 0;
   myQueue.push(curr);
+
+  //cout << "before opening a file" << endl;
   string result;
   ofstream myfile;
   myfile.open(output_filename);
+  myfile << "(actor)--[movie#@year]-->(actor)--..." << "\n";
+
+  //cout << "file opened" << endl;
   
+  bool firstLoop = true;
   while(myQueue.empty() == false){
     curr = myQueue.top();
     myQueue.pop();
     if(curr->done == false){
       curr->done = true;
+      //cout << curr->actorName << endl;
 
-      result = "(" + result + curr->actorName + ")--[" + curr->prevM->movieName + "#@" + to_string(curr->prevM->movieYear) + "]";
-
+      if(firstLoop == true){
+        firstLoop = false;
+        result += "(" + curr->actorName + ")";
+      }
+/*
+      else{
+        result += "--[" + curr->prevM->movieName + "#@" + to_string(curr->prevM->movieYear) + "]-->(" + curr->actorName + ")";
+      }
+*/
       if(curr->actorName == find_name){
+        MovieNode * currM;
+        vector<MovieNode*> arrM;
+        vector<ActorNode*> arrA;
+        while(curr->actorName != start_name){
+          currM = curr->prevM;
+          arrM.push_back(currM);
+          arrA.push_back(curr);
+          curr = curr->prev;
+          //result += "--[" + currM->movieName + "#@" + to_string(currM->movieYear) + "-->(" + curr->actorName + ")";
+        }
+        for(int i = arrA.size() - 1; i >= 0; --i){
+          result += "--[" + arrM[i]->movieName + "#@" + to_string(arrM[i]->movieYear) + "]-->(" + arrA[i]->actorName + ")";
+        }
+
+        cout << "result is " << result << endl;
         //write to new line of file
         myfile << result << "\n";
         myfile.close();
         return;
       }
-      else{
-        result += "-->";
-      }
 
+      //cout << "after augmenting string" << endl;
+
+      MovieNode * currMovie;
       for(int index = 0; index < curr->movieArr.size(); ++index){
-        int c = curr->dist + 1 + (2018 - curr->movieArr[index]->movieYear);
-        if(c < curr->dist){
-          for(int j = 0; j < curr->movieArr[index]->actorArr.size(); ++j){
-            if(curr->movieArr[index]->actorArr[j]->actorName != curr->actorName){
-              curr->movieArr[index]->actorArr[j]->prev = curr;
-              curr->movieArr[index]->actorArr[j]->dist = c;
-              curr->movieArr[index]->actorArr[j]->prevM = curr->movieArr[index];
-              myQueue.push(curr->movieArr[index]->actorArr[j]);
-              break;
+        currMovie = curr->movieArr[index];
+        int c = curr->dist + 1 + (2018 - currMovie->movieYear);
+        //cout << "curr dist is " << curr->dist << endl;
+        //cout << "c is " << c << endl;
+
+        for(int j = 0; j < currMovie->actorArr.size(); ++j){
+          if(c < currMovie->actorArr[j]->dist){
+            if(currMovie->actorArr[j]->actorName != curr->actorName){
+              currMovie->actorArr[j]->prev = curr;
+              currMovie->actorArr[j]->dist = c;
+              currMovie->actorArr[j]->prevM = currMovie;
+              //currMovie->prevA = curr;
+              myQueue.push(currMovie->actorArr[j]);
+              //cout << "enqueue " << currMovie->actorArr[j]->actorName << endl;
             }
           }
         }
@@ -237,4 +279,6 @@ void ActorGraph::findPath(bool weighted, string & start_name, string & find_name
   //write empty line to file
   myfile << "\n";
   myfile.close();
+
+  //cout << "file closed" << endl;
 }

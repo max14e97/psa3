@@ -18,69 +18,7 @@
 #include "MovieNode.hpp"
 
 using namespace std;
-/*
-void findPath(bool weighted, string & start_name, string & find_name, const char* output_filename){
-  ActorNode * curr = NULL;
 
-  if(actorMap.count(start_name) != 0){
-    curr = actorMap[strat_name];
-  }
-  else{
-    //print empty line onto file?
-    return;
-  }
-
-  priority_queue<ActorNode*, vector<ActorNode*>, Compare> myQueue;
-
-  curr->dist = 0;
-  myQueue.push(curr);
-
-  string result;
-
-  ofstream myfile;
-  myfile.open(output_filename);
-  
-  while(myQueue.empty() == false){
-    curr = myQueue.top();
-    myQueue.pop();
-    if(curr->done == false){
-      curr->done = true;
-
-      result = "(" + result + curr->actorName + ")--[" + curr->prevM->movieName + "#@" + to_string(curr->prevM->movieYear) + "]";
-
-      if(curr->actorName == find_name){
-        //write to new line of file
-        myfile << result << "\n";
-        myfile.close();
-        return;
-      }
-      else{
-        result += "-->";
-      }
-
-      for(int index = 0; index < curr->movieArr.size(); ++index){
-          
-        int c = curr->dist + 1 + (2018 - curr->movieArr[index]->movieYear);
-        if(c < curr->dist){
-          for(int j = 0; j < curr->movieArr[index]->actorArr.size(); ++j){
-            if(curr->movieArr[index]->actorArr[j]->actorName != curr->actorName){
-              curr->movieArr[index]->actorArr[j]->prev = curr;
-              curr->movieArr[index]->actorArr[j]->dist = c;
-              curr->movieArr[index]->actorArr[j]->prevM = curr->movieArr[index];
-              myQueue.push(curr->movieArr[index]->actorArr[j]);
-              break;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  //write empty line to file
-  myfile << "\n";
-  myfile.close();
-}
-*/
 vector<string> loadFromFindFile(const char* in_filename) {
     // Initialize the file stream
     ifstream infile(in_filename);
@@ -158,8 +96,9 @@ int main(int argc, const char ** argv) {
   string find_filename = argv[3];
   string output_filename = argv[4];
 
-  ActorGraph myGraph(in_filename.c_str(), weighted);
   vector<string> findArr = loadFromFindFile(find_filename.c_str());
+
+    ActorGraph myGraph(in_filename.c_str(), weighted);
 
   for(int i = 0; i < findArr.size(); i+=2){
     myGraph.findPath(weighted, findArr[i], findArr[i+1], output_filename.c_str());
