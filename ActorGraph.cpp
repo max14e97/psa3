@@ -79,18 +79,18 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         // we have an actor/movie relationship, now what?
         /*
         if(use_weighted_edges == false){
-          movie_year = 2018;
+          movie_year = 1;
         }
         */
-        //movie_title += "$";
-        //movie_title += to_string(movie_year);
 
-          MovieNode *myMovie = new MovieNode(movie_title, movie_year);
-          ActorNode *myActor = new ActorNode(actor_name);
+        movie_title += "$$";
+        movie_title += to_string(movie_year);
+
+        MovieNode *myMovie = new MovieNode(movie_title, movie_year);
+        ActorNode *myActor = new ActorNode(actor_name);
 
         if(movieMap.count(movie_title) == 0){
           movieMap[movie_title] = myMovie;
-
         }
         else{
           //free delete?
@@ -99,11 +99,9 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
 
         if(actorMap.count(actor_name) == 0){
           actorMap[actor_name] = myActor;
-
         }
         else{
           myActor = (actorMap[actor_name]);
-
         }
 
         myActor->movieArr.push_back(myMovie);
@@ -129,67 +127,13 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
     return true;
 }
 
-/*
-vector<string> ActorGraph::loadFromFindFile(const char* in_filename) {
-    // Initialize the file stream
-    ifstream infile(in_filename);
-
-    bool have_header = false;
-    vector<string> result;
-  
-    // keep reading lines until the end of file is reached
-    while (infile) {
-        string s;
-    
-        // get the next line
-        if (!getline( infile, s )) break;
-
-        if (!have_header) {
-            // skip the header
-            have_header = true;
-            continue;
-        }
-
-        istringstream ss( s );
-        vector <string> record;
-
-        while (ss) {
-            string next;
-      
-            // get the next string before hitting a tab character and put it in 'next'
-            if (!getline( ss, next, '\t' )) break;
-
-            record.push_back( next );
-        }
-    
-        if (record.size() != 2) {
-            // we should have exactly 3 columns
-            continue;
-        }
-
-        string start_name(record[0]);
-        string find_name(record[1]);
-    
-        result.push_back(start_name);
-        result.push_back(find_name);
-    }
-
-    if (!infile.eof()) {
-        cerr << "Failed to read " << in_filename << "!\n";
-        return result;
-    }
-    infile.close();
-   
-    return result;
-}
-*/
-
-void ActorGraph::findPath(bool weighted, string & start_name, string & find_name, const char* output_filename){
+string ActorGraph::findPath(bool weighted, string & start_name, string & find_name, const char* output_filename){
   priority_queue<ActorNode*, vector<ActorNode*>, Compare> myQueue;
+  string result;
 
   if((actorMap.count(start_name) == 0) || (actorMap.count(find_name) == 0)){
     //print empty line onto file?
-    return;
+    return result;
   }
 
   for(auto itr : actorMap){
@@ -205,10 +149,9 @@ void ActorGraph::findPath(bool weighted, string & start_name, string & find_name
   myQueue.push(curr);
 
   //cout << "before opening a file" << endl;
-  string result;
-  ofstream myfile;
-  myfile.open(output_filename);
-  myfile << "(actor)--[movie#@year]-->(actor)--..." << "\n";
+  //ofstream myfile;
+  //myfile.open(output_filename);
+  //myfile << "(actor)--[movie#@year]-->(actor)--..." << "\n";
 
   //cout << "file opened" << endl;
   
@@ -241,14 +184,14 @@ void ActorGraph::findPath(bool weighted, string & start_name, string & find_name
           //result += "--[" + currM->movieName + "#@" + to_string(currM->movieYear) + "-->(" + curr->actorName + ")";
         }
         for(int i = arrA.size() - 1; i >= 0; --i){
-          result += "--[" + arrM[i]->movieName + "#@" + to_string(arrM[i]->movieYear) + "]-->(" + arrA[i]->actorName + ")";
+          result += "--[" + arrM[i]->movieName.substr(0, arrM[i]->movieName.find("$$")) + "#@" + to_string(arrM[i]->movieYear) + "]-->(" + arrA[i]->actorName + ")";
         }
 
-        cout << "result is " << result << endl;
+        //cout << "result is " << result << endl;
         //write to new line of file
-        myfile << result << "\n";
-        myfile.close();
-        return;
+        //myfile << result << "\n";
+        //myfile.close();
+        return result;
       }
 
       //cout << "after augmenting string" << endl;
@@ -257,6 +200,9 @@ void ActorGraph::findPath(bool weighted, string & start_name, string & find_name
       for(int index = 0; index < curr->movieArr.size(); ++index){
         currMovie = curr->movieArr[index];
         int c = curr->dist + 1 + (2018 - currMovie->movieYear);
+        if(weighted == false){
+          c = curr->dist + 1;
+        }
         //cout << "curr dist is " << curr->dist << endl;
         //cout << "c is " << c << endl;
 
@@ -277,8 +223,9 @@ void ActorGraph::findPath(bool weighted, string & start_name, string & find_name
   }
 
   //write empty line to file
-  myfile << "\n";
-  myfile.close();
+  //myfile << "\n";
+  //myfile.close();
 
   //cout << "file closed" << endl;
+  return result;
 }

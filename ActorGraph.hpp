@@ -31,6 +31,16 @@ public:
     unordered_map<string, MovieNode*> movieMap;
 
     ActorGraph(const char* in_filename, bool use_weighted_edges);
+    ~ActorGraph(){
+      for(auto itr : actorMap){
+        delete(itr.second);
+      }
+
+      for(auto itr : movieMap){
+        delete(itr.second);
+      }
+
+    }
 
     // Maybe add some more methods here
   
@@ -45,7 +55,7 @@ public:
      */
     bool loadFromFile(const char* in_filename, bool use_weighted_edges);
     
-    void findPath(bool weighted, string & start_name, string & find_name, const char* output_filename);
+    string findPath(bool weighted, string & start_name, string & find_name, const char* output_filename);
 
     //vector<string> loadFromFindFile(const char* in_filename);
 };
