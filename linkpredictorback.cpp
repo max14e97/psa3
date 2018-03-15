@@ -20,18 +20,13 @@
 using namespace std;
 
 class resultNode{
-public:
   int first;
   int second;
   string name;
 
-  resultNode(int in1, int in2, string in3){
-    first = in1;
-    second = in2;
-    name = in3;
-  }
+  resultNode
 };
-/*
+
 struct Compare : public std::binary_function<pair<int,int>, pair<int,int>, bool>{
     bool operator() (const pair<int,int> n1, const pair<int,int> n2) const{
       if(n1.first != n2.first){
@@ -41,17 +36,8 @@ struct Compare : public std::binary_function<pair<int,int>, pair<int,int>, bool>
       }
     }
 };
-*/
-struct Compare : public std::binary_function<resultNode, resultNode, bool>{
-    bool operator() (const resultNode & n1, const resultNode & n2) const{
-      if(n1.first != n2.first){
-        return ((n1.first) < (n2.first));
-      }
-      else{
-	return ((n1.name) > (n2.name));
-      }
-    }
-};
+
+struct
 
 vector<string> loadFromFindFile(const char* in_filename) {
     // Initialize the file stream
@@ -154,36 +140,28 @@ int main(int argc, const char ** argv) {
     }
     cout << "\n" << endl;
 */
-    //priority_queue<pair<int,int>, vector<pair<int,int>>, Compare> maxQueue;
-    priority_queue<resultNode, vector<resultNode>, Compare> whatQueue;
+    priority_queue<pair<int,int>, vector<pair<int,int>>, Compare> maxQueue;
     for(int j = 0; j < resultArr.size(); ++j){
-      //maxQueue.push(make_pair(resultArr[j],j));
-      resultNode thisNode(resultArr[j],j,myGraph.paraArr[j]);
-      whatQueue.push(thisNode);
+      maxQueue.push(make_pair(resultArr[j],j));
     }
 
     vector<string> resultZero;
     vector<string> resultOne;
 
     while((resultZero.size() < 4) || (resultOne.size() < 4)){
-      //int foundFreq = maxQueue.top().first;
-      //int foundIndex = maxQueue.top().second;
-      //cout << maxQueue.top().first << "-" << myGraph.paraArr[foundIndex] << " ";
-      //maxQueue.pop();
-      int foundFreq = whatQueue.top().first;
-      int foundIndex = whatQueue.top().second;
+      int foundFreq = maxQueue.top().first;
+      int foundIndex = maxQueue.top().second;
+      cout << maxQueue.top().first << "-" << myGraph.paraArr[foundIndex] << " ";
+      maxQueue.pop();
       
       //keep finding items following it until first is not the same
       //#1 top pop push
       //#2 loop to find everything and put into a vector
      if(foundIndex == findIndex){
-        whatQueue.pop();
+        maxQueue.pop();
         continue;
       }
       else if((myGraph.adjMatrix[foundIndex][findIndex] == 0) && (resultZero.size() < 4)){
-        resultZero.push_back(myGraph.paraArr[foundIndex]);
-
-/*
         vector<int> temp;
         while(maxQueue.top().first == foundFreq){
           temp.push_back(maxQueue.top().second);
@@ -202,11 +180,11 @@ int main(int argc, const char ** argv) {
         else{
           resultZero.push_back(tempName[0]);
         }
-*/      
+        
       }
       else if((myGraph.adjMatrix[foundIndex][findIndex] == 1) && (resultOne.size() < 4)){
         cout << "pushed! ";
-        resultOne.push_back(myGraph.paraArr[foundIndex]);
+        //resultOne.push_back(myGraph.paraArr[foundIndex]);
 
 /*
         vector<int> temp;
@@ -229,8 +207,6 @@ int main(int argc, const char ** argv) {
         }
 */      
       }
-
-      whatQueue.pop();
     }
 
     myfile << resultOne[0] << "\t";
