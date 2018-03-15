@@ -7,11 +7,11 @@ LDFLAGS=
 # if passed "type=opt" at command-line, compile with "-O3" flag (otherwise use "-g" for debugging)
 
 ifeq ($(type),opt)
-    CPPFLAGS += -O3
-    LDFLAGS += -O3
-else
     CPPFLAGS += -g
     LDFLAGS += -g
+else
+    CPPFLAGS += -O3
+    LDFLAGS += -O3
 endif
 
 all: pathfinder linkpredictor awardsceremony
@@ -21,6 +21,8 @@ all: pathfinder linkpredictor awardsceremony
 # include what ever source code *.hpp files pathfinder relies on (these are merely the ones that were used in the solution)
 
 pathfinder: ActorNode.hpp MovieNode.hpp ActorGraph.hpp
+
+linkpredictor: ActorNode.hpp MovieNode.hpp linkGraph.cpp linkpredictor.cpp
 
 
 
@@ -38,5 +40,5 @@ MovieNode.o: ActorNode.hpp MovieNode.hpp
 
 
 clean:
-	rm -f pathfinder *.o core* *.gch
+	rm -f pathfinder linkpredictor *.o core* *.gch
 

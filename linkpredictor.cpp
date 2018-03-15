@@ -81,23 +81,12 @@ int main(int argc, const char ** argv) {
   if(argc != 5){
       cout << "Incorrect number of arguments." << endl;
       //cout << "\t First argument: name of dictionary file." << endl;
-      cout << endl;
       exit(-1);
   }
 
-  bool weighted;
-  if(string(argv[2]).compare("u") == 0){
-    weighted = false;
-  }
-  else if(string(argv[2]).compare("w") == 0){
-    weighted = true;
-  }
-  else{
-    exit(-1);
-  }
-
   string in_filename = argv[1];
-  string find_filename = argv[3];
+  string find_filename = argv[2];
+  string outputOne_filename = argv[3];
   string output_filename = argv[4];
 
   vector<string> findArr = loadFromFindFile(find_filename.c_str());
@@ -106,8 +95,12 @@ int main(int argc, const char ** argv) {
 
 
   ofstream myfile;
-  myfile.open(output_filename);
-  myfile << "(actor)--[movie#@year]-->(actor)--..." << "\n";
+  myfile.open(outputOne_filename);
+  myfile << "Actor1,Actor2,Actor3,Actor4" << "\n";
+
+  ofstream myfile2;
+  myfile2.open(output_filename);
+  myfile2 << "Actor1,Actor2,Actor3,Actor4" << "\n";
 
   for(int i = 0; i < findArr.size(); ++i){
 
@@ -140,6 +133,16 @@ int main(int argc, const char ** argv) {
       maxQueue.pop();
     }
 
+    myfile << resultOne[0] << "\t";
+    myfile << resultOne[1] << "\t";
+    myfile << resultOne[2] << "\t";
+    myfile << resultOne[3] << "\n";
+
+    myfile2 << resultZero[0] << "\t";
+    myfile2 << resultZero[1] << "\t";
+    myfile2 << resultZero[2] << "\t";
+    myfile2 << resultZero[3] << "\n";
+
     //string result = myGraph.findPath(weighted, findArr[i], findArr[i+1], output_filename.c_str());
 
     //write to new line of file
@@ -147,4 +150,5 @@ int main(int argc, const char ** argv) {
   }
 
   myfile.close();
+  myfile2.close();
 }

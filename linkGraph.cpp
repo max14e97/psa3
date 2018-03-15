@@ -57,12 +57,8 @@ public:
 
     }
 
-    bool loadFromFile(const char* in_filename);
-};
 
-#endif
-
-bool linkGraph::loadFromFile(const char* in_filename) {
+bool loadFromFile(const char* in_filename) {
     // Initialize the file stream
     ifstream infile(in_filename);
 
@@ -137,3 +133,5 @@ bool linkGraph::loadFromFile(const char* in_filename) {
     return true;
 }
 
+};
+#endif
