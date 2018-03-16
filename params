@@ -1,0 +1,1 @@
+valgrind --log-fd=1 --leak-check=yes ./pathfinder /home/linux/ieng6/cs100w/public/pa3/tsv/movie_casts.tsv w /home/linux/ieng6/cs100w/public/pa3/sampleInputs/sampleInputPart1 valgrindout

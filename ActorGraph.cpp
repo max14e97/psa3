@@ -94,6 +94,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         }
         else{
           //free delete?
+          delete(myMovie);
           myMovie = (movieMap[movie_title]);
         }
 
@@ -101,6 +102,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
           actorMap[actor_name] = myActor;
         }
         else{
+          delete(myActor);
           myActor = (actorMap[actor_name]);
         }
 

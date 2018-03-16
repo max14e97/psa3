@@ -1,5 +1,5 @@
-#ifndef LINKGRAPH_HPP
-#define LINKGRAPH_HPP
+#ifndef part3GRAPH_HPP
+#define part3RAPH_HPP
 
 #include <fstream>
 #include <iostream>
@@ -10,54 +10,69 @@
 #include <functional>
 
 #include <unordered_map>
-#include "ActorNode2.hpp"
-#include "MovieNode2.hpp"
-#include "ActorGraph.hpp"
+#include "ActorNode3.hpp"
+#include "MovieNode3.hpp"
 
 using namespace std;
-class linkGraph {
+
+struct Compare : public std::binary_function<ActorNode3*, ActorNode3*, bool>{
+    bool operator() (const ActorNode3 * n1, const ActorNode3 * n2) const{
+      return ((n1->numberKnown) > (n2->numberKnown));
+    }
+};
+
+/*
+bool comparison(const ActorNode3 * n1, const ActorNode3 * n2){
+  return ((n1->numberKnown) < (n2->numberKnown));
+}
+*/
+
+class part3Graph {
 public:
-    unordered_map<string, ActorNode2*> actorMap;
-    unordered_map<string, MovieNode2*> movieMap;
+    unordered_map<string, ActorNode3*> actorMap;
+    unordered_map<string, MovieNode3*> movieMap;
 
-    vector<vector<int>> adjMatrix;
-    vector<string> paraArr;
+    priority_queue<ActorNode3*, vector<ActorNode3*>, Compare> actorQueue;
 
-    linkGraph(const char* in_filename){
+    part3Graph(const char* in_filename){
       loadFromFile(in_filename);
 
-      for(int i = 0; i < actorMap.size(); ++i){
-        vector<int> subVector(actorMap.size(), 0);
-        adjMatrix.push_back(subVector);
-      }
+      ActorNode3 * myActor;
 
-      ActorNode2 * myActor;
-      int counter = 0;
       for(auto itr : movieMap){
         for(int i = 0; i < itr.second->actorArr.size(); ++i){
             myActor = itr.second->actorArr[i];
-	    if(myActor->index == -1){
-              //myMovie->actorArr[i];
-              paraArr.push_back(myActor->actorName);
-              myActor->index = paraArr.size() - 1;
-              //for(int i = 0; i < adjMatrix.size(); ++i)
-            }
 
+            ActorNode3 * currActor;
             for(int j = i+1; j < itr.second->actorArr.size(); ++j){
-              if(itr.second->actorArr[j]->index == -1){
-                paraArr.push_back(itr.second->actorArr[j]->actorName);
-                itr.second->actorArr[j]->index = paraArr.size() - 1;
-              }
+              currActor = itr.second->actorArr[j];
 
-              adjMatrix[myActor->index][itr.second->actorArr[j]->index] = 1;
-              adjMatrix[itr.second->actorArr[j]->index][myActor->index] = 1;
+              if(myActor->actorName != currActor->actorName){
+              if(myActor->mapKnown.count(currActor->actorName) == 0){
+                myActor->mapKnown[currActor->actorName] = currActor;
+              }
+              if(currActor->mapKnown.count(myActor->actorName) == 0){
+                currActor->mapKnown[myActor->actorName] = myActor;
+              }
+              }
             }
+          //cout << myActor->actorName << " knows " << myActor->numberKnown << endl;
         }
       }
 
+      for(auto itr : actorMap){
+        itr.second->numberKnown = itr.second->mapKnown.size();
+        actorQueue.push(itr.second);
+
+        //cout << itr.second->actorName << " knows " << itr.second->numberKnown << endl;
+      }
+
+      cout << "actor map node number " << actorMap.size() << endl;
+      cout << "pQueue size " << actorQueue.size() << endl;
+
     }
 
-    ~linkGraph(){
+    ~part3Graph(){
       for(auto itr : actorMap){
         delete(itr.second);
       }
@@ -112,8 +127,8 @@ bool loadFromFile(const char* in_filename) {
         movie_title += "$$";
         movie_title += to_string(movie_year);
 
-        MovieNode2 *myMovie = new MovieNode2(movie_title);
-        ActorNode2 *myActor = new ActorNode2(actor_name);
+        MovieNode3 *myMovie = new MovieNode3(movie_title);
+        ActorNode3 *myActor = new ActorNode3(actor_name);
 
         if(actorMap.count(actor_name) == 0){
           actorMap[actor_name] = myActor;

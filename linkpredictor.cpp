@@ -119,11 +119,11 @@ int main(int argc, const char ** argv) {
 
   vector<string> findArr = loadFromFindFile(find_filename.c_str());
 
-  cout << "begin building" << endl;
+  //cout << "begin building" << endl;
 
   linkGraph myGraph(in_filename.c_str());
 
-  cout << "finished building" << endl;
+  //cout << "finished building" << endl;
 
   ofstream myfile;
   myfile.open(outputOne_filename);
@@ -134,7 +134,7 @@ int main(int argc, const char ** argv) {
   myfile2 << "Actor1,Actor2,Actor3,Actor4" << "\n";
 
   for(int i = 0; i < findArr.size(); ++i){
-    cout << "begin writing for " << findArr[i] << endl;
+    //cout << "begin writing for " << findArr[i] << endl;
     //get the index in the matrix of the query name
     int findIndex = myGraph.actorMap[findArr[i]]->index;
 
@@ -205,7 +205,7 @@ int main(int argc, const char ** argv) {
 */      
       }
       else if((myGraph.adjMatrix[foundIndex][findIndex] == 1) && (resultOne.size() < 4)){
-        cout << "pushed! ";
+        //cout << "pushed! ";
         resultOne.push_back(myGraph.paraArr[foundIndex]);
 
 /*
@@ -243,7 +243,7 @@ int main(int argc, const char ** argv) {
     myfile2 << resultZero[2] << "\t";
     myfile2 << resultZero[3] << "\n";
 
-    cout << "finished writing for " << findArr[i] << endl;
+    //cout << "finished writing for " << findArr[i] << endl;
 
     //string result = myGraph.findPath(weighted, findArr[i], findArr[i+1], output_filename.c_str());
 

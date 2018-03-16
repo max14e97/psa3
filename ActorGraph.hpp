@@ -31,6 +31,7 @@ public:
     unordered_map<string, MovieNode*> movieMap;
 
     ActorGraph(const char* in_filename, bool use_weighted_edges);
+
     ~ActorGraph(){
       for(auto itr : actorMap){
         delete(itr.second);
@@ -39,7 +40,6 @@ public:
       for(auto itr : movieMap){
         delete(itr.second);
       }
-
     }
 
     // Maybe add some more methods here

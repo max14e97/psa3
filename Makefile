@@ -22,7 +22,9 @@ all: pathfinder linkpredictor awardsceremony
 
 pathfinder: ActorNode.hpp MovieNode.hpp ActorGraph.hpp
 
-linkpredictor: ActorNode.hpp MovieNode.hpp linkGraph.cpp linkpredictor.cpp
+linkpredictor: ActorNode2.hpp MovieNode2.hpp linkGraph.cpp linkpredictor.cpp
+
+awardsceremony: ActorNode3.hpp MovieNode3.hpp part3Graph.cpp awardsceremony.cpp
 
 
 
@@ -40,5 +42,5 @@ MovieNode.o: ActorNode.hpp MovieNode.hpp
 
 
 clean:
-	rm -f pathfinder linkpredictor *.o core* *.gch
+	rm -f pathfinder linkpredictor awardsceremony *.o core* *.gch
 
